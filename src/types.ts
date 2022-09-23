@@ -26,3 +26,15 @@ export type GbookItem = {
     imageLinks: { thumbnail: string };
   };
 };
+
+export type OpenLibraryResponse = {
+  numFound: number;
+  docs: OpenLibraryItem[];
+};
+
+export type OpenLibraryItem = {
+  title: string;
+  number_of_pages_median: number;
+  cover_i: number;
+  author_name: string[];
+};
