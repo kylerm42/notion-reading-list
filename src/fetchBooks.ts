@@ -81,12 +81,15 @@ function calculateUpdates(
   gbook: GbookItem,
   fetchKey: number | null
 ): UpdatePageParameters {
-  const coverProp = gbook.volumeInfo.imageLinks
+  const isbn = gbook.volumeInfo.industryIdentifiers.find((isbn) =>
+    ["ISBN_10", "ISBN_13"].includes(isbn.type)
+  )?.identifier;
+  console.log(`https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg`);
+  const coverProp = isbn
     ? {
         cover: {
           external: {
-            // url: gbook?.volumeInfo?.imageLinks?.thumbnail,
-            url: `https://readinglist-cover-proxy.srg.id.au/${gbook.id}.jpg`,
+            url: `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg`,
           },
         },
       }
@@ -135,7 +138,7 @@ function calculateUpdates(
       },
 
       Link: {
-        url: gbook.volumeInfo.infoLink,
+        url: `https://openlibrary.org/isbn/${isbn}`,
       },
 
       Pages: {
@@ -155,10 +158,10 @@ function calculateUpdates(
       },
     },
 
-    icon: gbook.volumeInfo.imageLinks
+    icon: isbn
       ? {
           external: {
-            url: `${gbook.volumeInfo.imageLinks.thumbnail}&extension=.jpg`,
+            url: `https://covers.openlibrary.org/b/isbn/${isbn}-S.jpg`,
           },
         }
       : {

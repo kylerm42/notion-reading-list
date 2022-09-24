@@ -23,6 +23,7 @@ export type GbookItem = {
     infoLink: string;
     averageRating?: number;
     pageCount?: number;
-    imageLinks: { thumbnail: string };
+    industryIdentifiers: { type: string; identifier: string }[];
+    // imageLinks: { thumbnail: string };
   };
 };
