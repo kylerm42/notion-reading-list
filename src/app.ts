@@ -1,9 +1,9 @@
 import { validateEnv } from "./config";
-import { fetchBooks } from "./fetchBooks";
+import updateBooks from "./updateBooks";
 
 function run() {
   const config = validateEnv();
-  fetchBooks(config);
+  updateBooks(config);
 }
 
 run();

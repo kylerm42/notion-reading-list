@@ -1,43 +1,43 @@
-# Notion Reading List - Backend
+# Self-Hosted Notion Reading List Backend
 
-### This code is designed to be used with the guide, available [here](https://srg.id.au/notion-reading-list/).
+First, thanks to [shaunakg](https://github.com/shaunakg/notion-reading-list) for getting this started and providing a base to build upon.
 
-Hi! If you're looking at this text from the repl.it page, you can continue with the steps of the guide, namely:
+## Purpose
 
-1. Filling in the `DATABASE_ID` and `NOTION_API_KEY` variables
-2. Starting the server
-3. Copying the URL and pasting it back into the guide page.
+The goal of this project is to provide a simple, yet powerful, way to automatically populate metadata for a reading list Notion database. It's powered by the [Open Library API](https://openlibrary.org/developers/api), [Google Books API](https://developers.google.com/books/docs/v1/reference/volumes/list), and of course the [Notion API](https://developers.notion.com/reference/intro).
 
-## What this server does
+## Requirements
 
-This server is designed to check for new pages in your Notion database every time the `/fetch` endpoint is called. Optionally, if you specify a `AUTO_FETCH_INTERVAL` (in ms) environment variable, it will automatically check Notion for updates on that interval.
-If a page's title ends with a semicolon, it will fetch book metadata and update it.
+- You'll need you Notion database id. It is a 32-character string that can be found in the URL when viewing the database: `https://www.notion.so/username/database-id`.
+- You need to create a Notion integration.
+  - Navigate to [https://www.notion.so/my-integrations](https://www.notion.so/my-integrations) and click "New Integration".
+  - Name your integration whatever you like, and give it permission for reading and updating content. It does not require inserting or any user permissions. Click "Submit".
+  - Note the "Internal Integration Token", as we'll need that later.
+  - Return to your database, click the three dots in the top right, select "Add Connections", and find the integration you just created.
+- This app requires only two fields on your Notion database to run. They will be created automatically on first run if they don't already exist.
+  - "Autofetch Status": Checkbox - this field determines whether the app has scanned this book.
+  - "Autofetch Key": Number - this field determines the index of the results to use from the API search (defaults to 0).
 
-## Updating server code
+## Running the container
 
-Through an extremely hacky method, I've arranged it so that the index.js file will re-download modules.js from source control every time the server is started. This means that you don't have to worry about fixing bugs as it will be done automatically (when I've pushed a fix).
+- Copy `.env.example` to `.env` and fill in the appropriate values
+  - `NOTION_API_KEY` - the "Internal Integration Token" we got from our integration above.
+  - `NOTION_DATABASE_ID` - the database id that can be found in the URL
+  - `FETCH_INTERVAL` - time in milliseconds between checks to your database for pages to update
+- In your terminal of choice, create the docker image by running ``docker build -t notion-reading-list .`.
+- Next, run the container with `docker run --env-file=.env notion-reading-list`.
+- Congratulations, you have a service that will automatically detect new books in your database and add metadata!
 
-However, if you make your own changes to modules.js, you will have to disable auto-updating by commenting out the `fs.writeFileSync("modules.js", r);` line in index.js to prevent your changes from being overwritten.
+## Usage
 
-## Privacy and safety
+- This app can fetch a variety of fields
+  - Title - this is obviously the title of the page
+  - Author(s) - Multi-select
+  - Description - Text
+  - Genre(s) - Multi-select
+  - Link - URL
+  - Pages - Number
+  - Average rating - Number
+  - Cover image and icon
 
-There is a possible concern that you might have in regards to your privacy and safety with this service.
-
-### 1. Auto-update functionality
-
-The auto-update functionality is designed for convienience. Previously, whenever there was a bug, I would have to write another section specifying exactly which lines of code you'd have to patch, and somehow convey that information to users (through the guide, email, etc). With the auto-update functionality, you don't have to worry about that.
-
-However, this does mean that the server will automatically download code from a source that you don't control. This is a security risk, and if you're worried, you can disable the auto-update functionality by commenting out the `fs.writeFileSync("modules.js", r);` line in index.js.
-
-## Docker
-
-This repo comes with a Dockerfile if you wish to run this locally or on your own server.
-
-1. Copy the `.env.example` to `.env` and fill in with the appropriate values.
-2. In your terminal of choice, run `docker build -t notion-reading-list .`
-3. Run `docker run --env-file=.env notion-reading-list`.
-4. Now you have a container running that you can manage locally.
-
-## Support
-
-I hope you enjoy using this service! To support more tools like this, you can [sponsor me on Github](https://github.com/sponsors/shaunakg/).
+## Development

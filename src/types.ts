@@ -1,4 +1,4 @@
-export type BookPage = {
+export type NotionBookPage = {
   id: string;
   properties: {
     Title: { title: { plain_text: string }[] };
@@ -8,12 +8,31 @@ export type BookPage = {
   };
 };
 
-export type GbookResponse = {
-  totalItems: number;
-  items: GbookItem[];
+export type BookMeta = {
+  title: string;
+  authors?: string[];
+  genres?: string[];
+  description?: string;
+  link?: string;
+  rating?: number;
+  pageCount?: number;
+  isbn?: string;
+  coverImageUrl?: string;
+  iconImageUrl?: string;
 };
 
-export type GbookItem = {
+export type FetchMetaParams = {
+  pageTitle: string;
+  authors: string[];
+  fetchKey: number | null;
+};
+
+export type GBooksResponse = {
+  totalItems: number;
+  items: GBooksItem[];
+};
+
+export type GBooksItem = {
   id: string;
   volumeInfo: {
     title: string;
@@ -24,6 +43,18 @@ export type GbookItem = {
     averageRating?: number;
     pageCount?: number;
     industryIdentifiers: { type: string; identifier: string }[];
-    // imageLinks: { thumbnail: string };
   };
+};
+
+export type OpenLibraryResponse = {
+  numFound: number;
+  docs: OpenLibraryItem[];
+};
+
+export type OpenLibraryItem = {
+  title: string;
+  number_of_pages_median: number;
+  cover_i: number;
+  author_name: string[];
+  isbn: string[];
 };
