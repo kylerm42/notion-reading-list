@@ -24,6 +24,7 @@ The goal of this project is to provide a simple, yet powerful, way to automatica
   - "Autofetch Status": Checkbox - this field determines whether the app has scanned this book.
   - "Autofetch Key": Number - this field determines the index of the results to use from the API search (defaults to 0).
   - "Updated At": Lasted edited time - this field helps prevent looking up metadata before you've finished typing
+  - "Original Title": Rich text - in case the service finds a wildly incorrect match, you can refer to this for the original page name
 
 ## Running the container
 
