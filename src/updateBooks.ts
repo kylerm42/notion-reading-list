@@ -3,37 +3,40 @@ import { Env } from "./config";
 import fetchBookMeta from "./bookMeta";
 import { NotionBookPage } from "./types";
 import { transformErrorUpdate, transformUpdate } from "./transformUpdates";
+import { ensureDatabasePropertiesExist } from "./database";
 
-export default async function updateBooks(config: Env) {
-  const client = new notion.Client({ auth: config.NOTION_API_KEY });
-  client.databases.update({
-    database_id: config.NOTION_DATABASE_ID,
-    properties: {
-      "Autofetch Status": {
-        checkbox: {},
-      },
-      "Autofetch Key": {
-        number: {},
-      },
-    },
-  });
-
+export default async function updateBooks(client: notion.Client, config: Env) {
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - 1);
   const notionResponse = (await notion.collectPaginatedAPI(
     client.databases.query,
     {
-      database_id: config.NOTION_DATABASE_ID,
+      database_id: config.notionDatabaseId,
       filter: {
-        property: "Autofetch Status",
-        checkbox: {
-          equals: false,
-        },
+        and: [
+          {
+            property: "Autofetch Status",
+            checkbox: {
+              equals: false,
+            },
+          },
+          {
+            property: "Updated At",
+            date: {
+              on_or_before: now.toISOString(),
+            },
+          },
+        ],
       },
     }
   )) as unknown as NotionBookPage[];
   console.info(`Found ${notionResponse.length} book(s) to update`);
 
   for (const notionBookPage of notionResponse) {
-    const pageTitle = notionBookPage.properties.Title.title[0].plain_text;
+    console.log(notionBookPage.properties["Original Title"]);
+    const pageTitle =
+      notionBookPage.properties["Original Title"].rich_text[0].text.content ||
+      notionBookPage.properties.Title.title[0].plain_text;
     const authors = notionBookPage.properties["Author(s)"].multi_select.map(
       (x) => x.name
     );
@@ -60,6 +63,12 @@ export default async function updateBooks(config: Env) {
       console.error(`Error on ${pageTitle}: [${e.status}] ${e.message}`);
       if (e.status === 409) {
         continue;
+      } else if (
+        e.code === notion.APIErrorCode.ValidationError &&
+        (e.message as string).includes("is not a property that exists")
+      ) {
+        ensureDatabasePropertiesExist(client, config.notionDatabaseId);
+        continue;
       } else {
         await client.pages.update(
           transformErrorUpdate(notionBookPage, `[${e.status}] ${e.message}`)
@@ -71,7 +80,7 @@ export default async function updateBooks(config: Env) {
     console.info(`Updated ${pageTitle}`);
   }
 
-  setTimeout(() => updateBooks(config), config.FETCH_INTERVAL);
+  setTimeout(() => updateBooks(client, config), config.fetchInterval * 1000);
 }
 
 // TODO:

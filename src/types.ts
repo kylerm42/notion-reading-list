@@ -5,6 +5,7 @@ export type NotionBookPage = {
     "Author(s)": { multi_select: { name: string }[] };
     "Autofetch Status": { checkbox: boolean };
     "Autofetch Key": { number: number | null };
+    "Original Title": { rich_text: { text: { content: string } }[] };
   };
 };
 

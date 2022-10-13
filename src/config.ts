@@ -1,25 +1,22 @@
-import Joi from "joi";
-
 export type Env = {
-  NOTION_DATABASE_ID: string;
-  NOTION_API_KEY: string;
-  FETCH_INTERVAL: number;
+  notionDatabaseId: string;
+  notionApiKey: string;
+  fetchInterval: number;
 };
 
-const envValidator = Joi.object<Env>({
-  NOTION_DATABASE_ID: Joi.string().required(),
-  NOTION_API_KEY: Joi.string().required(),
-  FETCH_INTERVAL: Joi.number().default(10000),
-});
-
-export function validateEnv() {
-  const validationResult = envValidator.validate(process.env, {
-    stripUnknown: true,
-    convert: true,
-  });
-  if (validationResult.error) {
-    throw new Error(validationResult.error.message);
-  } else {
-    return validationResult.value;
+export function validateEnv(): Env {
+  const env = process.env;
+  if (!env.NOTION_DATABASE_ID) {
+    throw new Error("NOTION_DATABASE_ID environment variable must be defined");
+  } else if (!env.NOTION_API_KEY) {
+    throw new Error("NOTION_API_KEY environment variable must be defined");
+  } else if (!env.FETCH_INTERVAL) {
+    console.warn("FETCH_INTERVAL not set, defaulting to 10 seconds");
   }
+
+  return {
+    notionDatabaseId: env.NOTION_DATABASE_ID,
+    notionApiKey: env.NOTION_API_KEY,
+    fetchInterval: Number(env.FETCH_INTERVAL) || 10,
+  };
 }

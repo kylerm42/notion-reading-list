@@ -69,12 +69,16 @@ export function transformUpdate(
         number: bookMeta.rating ?? 0,
       },
 
-      "Autofetch Statusz": {
+      "Autofetch Status": {
         checkbox: true,
       },
 
       "Autofetch Key": {
         number: fetchKey ?? 0,
+      },
+
+      "Original Title": {
+        rich_text: [{ text: { content: pageTitle } }],
       },
     },
 

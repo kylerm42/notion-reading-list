@@ -4,6 +4,7 @@ import {
   GBooksItem,
   GBooksResponse,
 } from "../types";
+import fetch from "node-fetch";
 
 export default async function fetchGBooks({
   pageTitle,

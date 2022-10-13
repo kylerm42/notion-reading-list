@@ -1,9 +1,14 @@
+import * as notion from "@notionhq/client";
 import { validateEnv } from "./config";
+import { ensureDatabasePropertiesExist } from "./database";
 import updateBooks from "./updateBooks";
 
-function run() {
+function main() {
   const config = validateEnv();
-  updateBooks(config);
+  const client = new notion.Client({ auth: config.notionApiKey });
+  ensureDatabasePropertiesExist(client, config.notionDatabaseId);
+
+  updateBooks(client, config);
 }
 
-run();
+main();
