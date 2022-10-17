@@ -49,3 +49,5 @@ The goal of this project is to provide a simple, yet powerful, way to automatica
   - Cover image and icon
 
 ## Development
+
+Clone this repo, run `npm install` and then `npm run start`.

@@ -5,5 +5,5 @@ COPY ["package.json", "package-lock.json", "./"]
 RUN npm install --location=global npm && npm install
 ARG NOTION_DATABASE_ID
 ARG NOTION_API_KEY
-ARG FETCH_INTERVAL=10000
-CMD [ "npm", "run", "start" ]
+ARG FETCH_INTERVAL=30
+ENTRYPOINT [ "npm", "run", "start" ]
