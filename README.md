@@ -8,7 +8,7 @@ The goal of this project is to provide a simple, yet powerful, way to automatica
 
 ## Requirements
 
-- You'll need you Notion database id. It is a 32-character string that can be found in the URL when viewing the database: `https://www.notion.so/username/database-id`.
+- You'll need your Notion database id. It is a 32-character string that can be found in the URL when viewing the database: `https://www.notion.so/username/database-id`.
 - You need to create a Notion integration.
   - Navigate to [https://www.notion.so/my-integrations](https://www.notion.so/my-integrations) and click "New Integration".
   - Name your integration whatever you like, and give it permission for reading and updating content. It does not require inserting or any user permissions. Click "Submit".
