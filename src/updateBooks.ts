@@ -5,7 +5,11 @@ import { NotionBookPage } from "./types";
 import { transformErrorUpdate, transformUpdate } from "./transformUpdates";
 import { ensureDatabasePropertiesExist } from "./database";
 
+let runNumber = 0;
 export default async function updateBooks(client: notion.Client, config: Env) {
+  runNumber += 1;
+  console.info(`Run number: ${runNumber}`);
+
   const now = new Date();
   now.setMinutes(now.getMinutes() - 1);
   const notionResponse = (await notion.collectPaginatedAPI(
@@ -82,7 +86,3 @@ export default async function updateBooks(client: notion.Client, config: Env) {
 
   setTimeout(() => updateBooks(client, config), config.fetchInterval * 1000);
 }
-
-// TODO:
-// update readme
-// handle double no results found
